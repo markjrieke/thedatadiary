@@ -4,53 +4,39 @@ library(datasets)
 
 # setup ----
 
-# Tweaking the "am" field to have nicer factor labels. Doesn't rely on any user
-# inputs, so can do this once at startup then use the value throughout the 
-# lifetime of the application.
-
-mpgData <- mtcars
-mpgData$am <- factor(mpgData$am,
-                     labels = c("Automatic", "Manual"))
 
 # server ----
 shinyServer(function(input, output) {
   
-  # Compute the formula text in a reactive expression since it is 
-  # shared by the output$caption and output$mpgPlot expressions
-  
-  formulaText <- reactive({
-    paste("mpg ~", input$variable)
-  })
-  
-  # Return the formula text for printing as a caption
-  output$caption <- renderText({
-    formulaText()
-  })
-  
-  # Generate a plot of the requested variable against mpg and only 
-  # include outliers if requested
-  output$mpgPlot <- renderPlot({
-    boxplot(as.formula(formulaText()),
-            data = mpgData,
-            outline = input$outliers)
-  })
-  
-  # reactive sliders
-  sliderValues <- reactive({
+  # Change distribution
+  data <- reactive({
+    dist <- switch(input$dist,
+                   norm = rnorm,
+                   unif = runif,
+                   lnorm = rlnorm,
+                   exp = rexp,
+                   rnorm)
     
-    # write dataframe
-    data.frame(Name = c("Integer", "Decimal", "Range", "Custom Format", "Animation"),
-               Value = as.character(c(input$integer,
-                                      input$decimal,
-                                      paste(input$range, collapse = " "),
-                                      input$format,
-                                      input$animation)),
-               stringsAsFactors = FALSE)
+    dist(input$n)
   })
   
-  # outputs
-  output$values <- renderTable({
-    sliderValues()
+  # Plot of the data
+  output$plot <- renderPlot({
+    dist <- input$dist
+    n <- input$n
+    
+    hist(data(),
+         main = paste("r", dist, "(", n, ")", sep = ""))
   })
+  
+  # summary
+  output$summary <- renderPrint({
+    summary(data())
+  })
+  
+  # Generate HTML table view
+  output$table <- renderTable({
+    data.frame(x = data())
+  }) 
   
 })
