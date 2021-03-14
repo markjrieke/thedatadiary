@@ -8,6 +8,7 @@ dd_blue_dark <- "#353F86"
 dd_red_dark <- "#BC4A58"
 dd_purple <- "#D755A6"
 dd_gray <- "#5E6264"
+dd_green <- "#65D755"
 
 # dd theme ! ----
 dd_theme <- theme(text = element_text(color = dd_black),
