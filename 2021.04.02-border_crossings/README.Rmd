@@ -340,9 +340,333 @@ f_encounter %>%
 Wow. I'm really not seeing the seasonality described in the WaPo article. It's hard to tell if it's because the model is too simple (just month as a predictor) or if there really isn't a seasonality effect. On the one hand, there are quite a few years where there's an up-tick early in the year, but there are also years where there's a *drop* at the beginning of the year. There are definitely a lot of other factors that don't get captured here, like policy decisions, country of origin (and factors from *within* that country that would affect someones decision to migrate), etc. 
 
 I think that there are two key things that can be taken away from this:
+
 1. Seasonality *on it's own* is definitely not a strong predictor of apprehensions at the border.
 2. Relative to the data from 2012-2017, 2019, 2020, and 2021 (already) have months with extremely high number of border crossings. 
 
+I think that this *lack* of a clear relation between the month & encounters is worth talking about, since it's a refutation of the WaPo article. 
+
+Well, okay, before I do that, I want to check out the 3 month and 6 month averages. I don't necessarily think that it'll add any insight, but on the off chance that I'm wrong...
+
+```{r avg}
+# adding zoo for rolling numbers
+library(zoo)
+
+f_encounter %>%
+  mutate(movavg_3 = rollmean(encounters,
+                             k = 3,
+                             align = "right",
+                             fill = NA),
+         movavg_6 = rollmean(encounters,
+                             k = 6,
+                             align = "right",
+                             fill = NA)) %>%
+  ggplot() +
+  geom_line(aes(x = date,
+                y = movavg_3),
+            color = "red") +
+  geom_line(aes(x = date,
+                y = movavg_6),
+            color = "blue") +
+  labs(title = "3/6 month rolling averages",
+       subtitle = "3 month in red, 6 month in blue")
+
+```
+
+Alrighty, now to create *more* models:
+
+```{r more models...}
+# adding rollmeans to frame.
+f_encounter <- f_encounter %>%
+  mutate(movavg_3 = rollmean(encounters,
+                             k = 3,
+                             align = "right",
+                             fill = NA),
+         movavg_6 = rollmean(encounters,
+                             k = 6,
+                             align = "right",
+                             fill = NA))
+
+# adding in models
+m_crossing_3ma <- lm(movavg_3 ~ factor(cal_month), data = f_encounter)
+m_crossing_6ma <- lm(movavg_6 ~ factor(cal_month), data = f_encounter)
+
+# adding in pred plots
+f_encounter %>%
+  add_predictions(m_crossing_3ma) %>%
+  ggplot(aes(x = date,
+             y = pred)) +
+  geom_line()
+
+f_encounter %>%
+  add_predictions(m_crossing_6ma) %>%
+  ggplot(aes(x = date,
+             y = pred)) +
+  geom_line()
+
+```
+
+Interesting. Let's see how the residual plots look. I may run through a quick pre-Trump model (before the outlier 2019) after...
+
+```{r more resids}
+# residual plots
+f_encounter %>%
+  add_residuals(m_crossing_3ma) %>%
+  ggplot(aes(x = date,
+             y = resid)) +
+  geom_line()
+
+f_encounter %>%
+  add_residuals(m_crossing_6ma) %>%
+  ggplot(aes(x = date,
+             y = resid)) +
+  geom_line()
+```
+
+Yeah, much ado about nothing. Okay, last run through with some new models for *pre* Trump (again, don't think this'll show anything different).
+
+```{r more models broooooo}
+# updating pre frame & creating new models
+f_encounter_pre <- f_encounter %>%
+  filter(date <= as.Date("2017-01-01"))
+
+m_crossing_pre_3ma <- lm(movavg_3 ~ factor(cal_month), data = f_encounter_pre)
+m_crossing_pre_6ma <- lm(movavg_6 ~ factor(cal_month), data = f_encounter_pre)
+
+# add preds
+f_encounter_pre %>%
+  add_predictions(m_crossing_pre_3ma) %>%
+  ggplot(aes(x = date,
+             y = pred)) +
+  geom_line() +
+  labs(title = "Pred plot",
+       subtitle = "3-mo pred")
+
+f_encounter_pre %>%
+  add_predictions(m_crossing_pre_6ma) %>%
+  ggplot(aes(x = date,
+             y = pred)) +
+  geom_line() + 
+  labs(title = "Pred plot",
+       subtitle = "6-mo pred")
+
+# add resids (pre dataset)
+f_encounter_pre %>%
+  add_residuals(m_crossing_pre_3ma) %>%
+  ggplot(aes(x = date,
+             y = resid)) +
+  geom_line() +
+  labs(title = "Resid plot",
+       subtitle = "3-mo resid")
+
+f_encounter_pre %>%
+  add_residuals(m_crossing_pre_6ma) %>%
+  ggplot(aes(x = date,
+             y = resid)) +
+  geom_line() +
+  labs(title = "Resid plot",
+       subtitle = "6-mo resid")
+
+# add resids (full dataset based on pre- model)
+f_encounter %>%
+  add_residuals(m_crossing_pre_3ma) %>%
+  ggplot(aes(x = date,
+             y = resid)) +
+  geom_line() +
+  labs(title = "Resid plot",
+       subtitle = "3-mo resid")
+
+f_encounter %>%
+  add_residuals(m_crossing_pre_6ma) %>%
+  ggplot(aes(x = date,
+             y = resid)) +
+  geom_line() +
+  labs(title = "Resid plot",
+       subtitle = "6-mo resid")
+```
+
+Beep boop, kind of what I thought. Alright, now just to make the final plots.
+
+## Putting together the final plots
+
+Firstly, I need to create the baseline plot - border encounters over time. 
+
+```{r}
+# adding in items for themes/formatting
+library(ggtext)
+extrafont::loadfonts(device = "win")
+devtools::source_url('https://raw.githubusercontent.com/markjrieke/thedatadiary/main/dd_theme_elements/dd_theme_elements.R')
+
+# uptick since the election
+p_1 <- f_encounter %>%
+  filter(date >= as.Date("2020-11-1")) %>%
+  ggplot(aes(x = date, 
+             y = encounters)) +
+  geom_line(size = 1.1,
+            color = dd_blue_dark) +
+  labs(title = "Encounters at the border are on the rise",
+       subtitle = "Total Southwest Land Border Encounters since November 2020",
+       caption = "Data from US Border Patrol (USBP) and Office of Field Operations (OFO) dashboard.",
+       x = NULL,
+       y = NULL) +
+  dd_theme +
+  theme(plot.title = element_markdown(family = "Siemens Slab", size = 18),
+        plot.subtitle = element_markdown(family = "Siemens Slab", size = 14),
+        axis.text = element_markdown(family = "Siemens Slab"),
+        plot.caption = element_markdown(family = "Siemens Slab"),
+        plot.title.position = "plot") +
+  scale_y_continuous(labels = scales::comma_format()) +
+  geom_point(aes(x = as.Date("2021-02-01"),
+                 y = 100441),
+             size = 5,
+             stroke = 2,
+             color = dd_blue_dark,
+             fill = dd_cream,
+             shape = 21) +
+  annotate(geom = "label",
+           label = "100,441 encounters\nin February",
+           label.size = 0,
+           family = "Siemens Slab",
+           fontface = "bold",
+           fill = dd_orange,
+           alpha = 0.25,
+           x = as.Date("2021-1-1"),
+           y = 95000) +
+  annotate(geom = "curve",
+           x = as.Date("2021-1-7"),
+           y = 97000,
+           xend = as.Date("2021-1-28"),
+           yend = 100400,
+           curvature = -0.2,
+           size = 1.1,
+           arrow = arrow(length = unit(3, "mm")))
+
+ggsave("p_1.png",
+       width = 9,
+       height = 6,
+       units = "in",
+       dpi = 500)
+
+p_1
+
+p_2 <- f_encounter %>%
+  ggplot(aes(x = date,
+             y = encounters)) +
+  geom_line(size = 1.1,
+            color = dd_blue_dark) +
+  labs(title = "Seasonal spikes seem to appear early in each year",
+       subtitle = "Total Southwest Land Border Encounters since October 2011",
+       caption = "Data from US Border Patrol (USBP) and Office of Field Operations (OFO) dashboard",
+       x = NULL,
+       y = NULL) +
+  dd_theme +
+  theme(plot.title = element_markdown(family = "Siemens Slab", size = 18),
+        plot.subtitle = element_markdown(family = "Siemens Slab", size = 14),
+        axis.text = element_markdown(family = "Siemens Slab"),
+        plot.caption = element_markdown(family = "Siemens Slab"),
+        plot.title.position = "plot") +
+  scale_y_continuous(labels = scales::comma_format()) +
+  annotate(geom = "label",
+           label = "Peak of 144,116 \nencounters in May '19",
+           label.size = 0,
+           family = "Siemens Slab",
+           fontface = "bold",
+           fill = dd_orange,
+           alpha = 0.25,
+           x = as.Date("2017-1-1"),
+           y = 110000) +
+  annotate(geom = "curve",
+           x = as.Date("2017-5-1"),
+           y = 117500,
+           xend = as.Date("2019-3-1"),
+           yend = 144000,
+           curvature = -0.2,
+           arrow = arrow(length = unit(3, "mm")),
+           size = 1.1,
+           curvature = -0.2)
+
+ggsave("p_2.png",
+       width = 9,
+       height = 6,
+       units = "in",
+       dpi = 500)
+
+p_2
+
+p_3 <- f_encounter %>%
+  ggplot(aes(x = cal_month,
+             y = encounters,
+             group = cal_yr,
+             color = as.character(cal_yr),
+             alpha = as.character(cal_yr))) +
+  geom_line(size = 1.1) +
+  scale_color_manual(values = c(rep(dd_gray, 8),
+                                dd_red,
+                                dd_blue,
+                                dd_green)) +
+  scale_alpha_manual(values = c(rep(0.4, 8),
+                                rep(1, 3))) +
+  dd_theme + 
+  theme(plot.title = element_markdown(family = "Siemens Slab", size = 18),
+        plot.subtitle = element_markdown(family = "Siemens Slab", size = 14),
+        axis.text = element_markdown(family = "Siemens Slab"),
+        plot.caption = element_markdown(family = "Siemens Slab"),
+        plot.title.position = "plot",
+        legend.position = "none") +
+  labs(title = "Recent breaks from the trend",
+       subtitle = "Monthly encounters in <span style = 'color:#D75565;'>**2019,**</span> <span style = 'color:#5565D7;'>**2020,**</span> and <span style = 'color:#65D755;'>**2021**</span> differ from previous years",
+       x = NULL,
+       y = NULL,
+       caption = "Data from US Border Patrol (USBP) and Office of Field Operations (OFO) dashboard") + 
+  scale_y_continuous(labels = scales::comma_format()) +
+  scale_x_continuous(breaks = seq(1, 12, 2),
+                     labels = c("Jan", "Mar", "May", "Jul", "Sep", "Nov"))
+
+ggsave("p_3.png",
+       width = 9,
+       height = 6,
+       units = "in",
+       dpi = 500)
+
+p_3
+```
+
+As an interjection... I reknit the doc & was scrolling through. It looks like there's both annual over/under performance of the model. I don't necessarily think this will reveal anything new, but I feel like I ought to check a 12 month average. This would still capture seasonality, but should also account for any of the "pent up demand" mentioned in the WaPo article. 
+
+## Hang on - more modeling
+
+Let's do some quick remodeling of 12 month data:
+
+```{r}
+# add new col
+f_encounter <- f_encounter %>%
+  mutate(movavg_12 = rollmean(encounters,
+                              k = 12,
+                              align = "right",
+                              fill = NA))
+
+# add new model
+m_crossing_12ma <- lm(movavg_12 ~ factor(cal_month), data = f_encounter)
+
+# plot check preds
+f_encounter %>%
+  add_predictions(m_crossing_12ma) %>%
+  ggplot(aes(x = date,
+             y = pred)) + 
+  geom_line()
+
+# plot check resids
+f_encounter %>%
+  add_residuals(m_crossing_12ma) %>%
+  ggplot(aes(x = date,
+             y = resid)) + 
+  geom_line()
+
+```
+
+Yeah, okay that really just makes all the residual plots smoother, doesn't really add any extra info. I kinda thought that at the outset, but good to double check. Continuing on with the final plots:
+
+## Final Plots (Continued)
 
 
 
