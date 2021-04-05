@@ -1,3 +1,6 @@
+# load fonts ----
+extrafont::loadfonts(device = "win")
+
 # dd colors ! ----
 dd_orange <- "#F48847"
 dd_black <- "#282D30"
@@ -11,11 +14,12 @@ dd_gray <- "#5E6264"
 dd_green <- "#65D755"
 
 # dd theme ! ----
-dd_theme <- theme(text = element_text(color = dd_black),
-                  plot.title = element_text(face = "bold", size = 14),
-                  plot.subtitle = element_text(size = 12),
+dd_theme <- theme(text = element_markdown(family = "Siemens Slab",
+                                          color = dd_black),
+                  plot.title = element_markdown(face = "bold", size = 18),
+                  plot.subtitle = element_markdown(size = 14),
                   panel.background = element_rect(fill = dd_cream),
                   axis.line.x.bottom = element_line(color = dd_black),
                   axis.line.y.left = element_line(color = dd_black),
-                  axis.text = element_text(color = dd_black),
+                  axis.text = element_markdown(color = dd_black),
                   axis.ticks = element_line(color = dd_black))
