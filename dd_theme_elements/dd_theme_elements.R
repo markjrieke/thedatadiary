@@ -18,6 +18,7 @@ dd_theme <- theme(plot.title = element_markdown(family = "Siemens Slab", face = 
                   plot.subtitle = element_markdown(family = "Siemens Slab", size = 14),
                   plot.caption = element_markdown(family = "Siemens Slab", color = dd_black), 
                   plot.title.position = "plot",
+                  legend.text = element_markdown(family = "Siemens Slab"),
                   panel.background = element_rect(fill = dd_cream),
                   axis.line.x.bottom = element_line(color = dd_black),
                   axis.line.y.left = element_line(color = dd_black),
