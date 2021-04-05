@@ -810,3 +810,42 @@ doesn’t really add any extra info. I kinda thought that at the outset,
 but good to double check. Continuing on with the final plots:
 
 ## Final Plots (Continued)
+
+``` r
+p_4 <- f_encounter %>%
+  add_residuals(m_crossing) %>%
+  ggplot(aes(x = date,
+             y = resid)) +
+  geom_line(size = 1.1,
+            color = dd_purple) +
+  dd_theme +
+  labs(title = "Seasonality offers little insight",
+       subtitle = "Residual error of expected encounters using month as predictor",
+       x = NULL,
+       y = NULL,
+       caption = "Data from US Border Patrol (USBP) and Office of Field Operations (OFO) dashboard") +
+  theme(plot.title = element_markdown(family = "Siemens Slab", size = 18),
+        plot.subtitle = element_markdown(family = "Siemens Slab", size = 14),
+        axis.text = element_markdown(family = "Siemens Slab"),
+        plot.caption = element_markdown(family = "Siemens Slab"),
+        plot.title.position = "plot",
+        legend.position = "none") +
+  scale_y_continuous(labels = scales::comma_format(),
+                     breaks = seq(-25000, 75000, 25000))
+
+ggsave("p_4.png",
+       width = 9,
+       height = 6,
+       units = "in",
+       dpi = 500)
+
+p_4
+```
+
+![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+
+That should do it. I’ll note that the way that Rmarkdown renders images
+is slightly different from the way that ggsave renders images, so things
+might look a bit odd in this document. Since I’m adding the .pngs to the
+post, and this is really just a walkthrough/stream of consciousness, I’m
+not going to worry about it too much.
