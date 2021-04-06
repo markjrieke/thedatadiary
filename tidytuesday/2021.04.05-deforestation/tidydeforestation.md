@@ -1,0 +1,247 @@
+
+``` r
+# libraries
+library(tidyverse)
+library(ggtext)
+devtools::source_url('https://raw.githubusercontent.com/markjrieke/thedatadiary/main/dd_theme_elements/dd_theme_elements.R')
+
+# data
+f_forest <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-04-06/forest.csv')
+f_forest_area <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-04-06/forest_area.csv')
+f_brazil_loss <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-04-06/brazil_loss.csv')
+f_soybean_use <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-04-06/soybean_use.csv')
+f_vegetable_oil <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-04-06/vegetable_oil.csv')
+
+f_vegetable_oil %>%
+  mutate(production = replace_na(production, 0),
+         code = replace_na(code, "grouped")) %>%
+  filter(code == "grouped") %>%
+  group_by(year, crop_oil) %>%
+  mutate(production = sum(production)) %>%
+  ungroup(year) %>%
+  distinct(year, .keep_all = TRUE) %>%
+  ungroup(crop_oil) %>%
+  select(year, crop_oil, production) %>%
+  ggplot(aes(x = year,
+             y = production,
+             fill = crop_oil)) +
+  geom_area()
+```
+
+![](tidydeforestation_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
+
+Cool plot - too many variables. Gotta knock it down to a few of the
+large ones & an other category
+
+``` r
+f_vegetable_oil %>%
+  mutate(production = replace_na(production, 0),
+         code = replace_na(code, "grouped")) %>%
+  filter(code == "grouped") %>%
+  group_by(year, crop_oil) %>%
+  mutate(production = sum(production)) %>%
+  ungroup(year) %>%
+  distinct(year, .keep_all = TRUE) %>%
+  ungroup(crop_oil) %>%
+  select(year, crop_oil, production) %>%
+  filter(year == max(year)) %>%
+  mutate(crop_oil = fct_reorder(crop_oil, production)) %>%
+  ggplot(aes(x = crop_oil,
+             y = production)) +
+  geom_col() +
+  coord_flip()
+```
+
+![](tidydeforestation_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+
+Keep palm, soybean, rapeseed, and sunflower. Merging all others into
+“other”
+
+``` r
+f_vegetable_oil %>%
+  mutate(production = replace_na(production, 0),
+         code = replace_na(code, "grouped")) %>%
+  filter(code == "grouped") %>%
+  group_by(year, crop_oil) %>%
+  mutate(production = sum(production)) %>%
+  ungroup(year) %>%
+  distinct(year, .keep_all = TRUE) %>%
+  ungroup(crop_oil) %>%
+  select(year, crop_oil, production) %>%
+  mutate(crop_oil = str_replace(crop_oil, 
+                                "Palm kernel|Groundnut|Cottonseed|Olive, virgin|Maize|Coconut \\(copra\\)|Sesame|Linseed|Safflower",
+                                "Other")) %>%
+  filter(year == max(year)) %>%
+  mutate(crop_oil = fct_reorder(crop_oil, production)) %>%
+  ggplot(aes(x = crop_oil,
+             y = production)) +
+  geom_col() +
+  coord_flip()
+```
+
+![](tidydeforestation_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+
+Awesome, that works out well. Now to check the new stacked area chart.
+
+``` r
+f_vegetable_oil %>%
+  mutate(production = replace_na(production, 0),
+         code = replace_na(code, "grouped"),
+         crop_oil = str_replace(crop_oil, 
+                                "Palm kernel|Groundnut|Cottonseed|Olive, virgin|Maize|Coconut \\(copra\\)|Sesame|Linseed|Safflower",
+                                "Other")) %>%
+  filter(code == "grouped") %>%
+  group_by(year, crop_oil) %>%
+  mutate(production = sum(production)) %>%
+  ungroup(year) %>%
+  distinct(year, .keep_all = TRUE) %>%
+  ungroup(crop_oil) %>%
+  select(year, crop_oil, production) %>%
+  mutate(crop_oil = fct_relevel(crop_oil, "Palm", "Soybean", "Rapeseed", "Sunflower", "Other")) %>%
+  ggplot(aes(x = year,
+             y = production,
+             fill = crop_oil)) +
+  geom_area()
+```
+
+![](tidydeforestation_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+Coolio, now I need to add a new col that creates a geom\_ribbon
+
+``` r
+f_vegetable_oil %>%
+  mutate(production = replace_na(production, 0),
+         code = replace_na(code, "grouped"),
+         crop_oil = str_replace(crop_oil, 
+                                "Palm kernel|Groundnut|Cottonseed|Olive, virgin|Maize|Coconut \\(copra\\)|Sesame|Linseed|Safflower",
+                                "Other")) %>%
+  filter(code == "grouped") %>%
+  group_by(year, crop_oil) %>%
+  mutate(production = sum(production)) %>%
+  ungroup(year) %>%
+  distinct(year, .keep_all = TRUE) %>%
+  ungroup(crop_oil) %>%
+  select(year, crop_oil, production) %>%
+  group_by(year) %>%
+  mutate(zero = sum(production)/2,
+         ymin = case_when(crop_oil == "Other" ~ -zero,
+                          crop_oil == "Sunflower" ~ -zero + lag(production, 3),
+                          crop_oil == "Rapeseed" ~ -zero + lag(production, 2) + 
+                            lead(production, 1),
+                          crop_oil == "Palm" ~ zero - production,
+                          crop_oil == "Soybean" ~ zero - lead(production, 2) - production),
+         ymax = ymin + production) %>%
+  ggplot(aes(x = year,
+             ymin = ymin,
+             ymax = ymax,
+             fill = crop_oil)) +
+  geom_ribbon() +
+  scale_fill_manual(values = c(dd_gray, "#5565D7", "#C755D7", "#8655D7", "#D755A6")) +
+  dd_theme +
+  scale_y_continuous(labels = c("400", "200", "0", "200", "400")) +
+  labs(title = "An explosion of oil production",
+       subtitle = "MM units of global vegetable oil production per year, by crop type",
+       caption = "Data from Our world In Data<br>as a part of #TidyTuesday",
+       x = NULL,
+       y = NULL) +
+  theme(legend.position = "none") +
+  annotate(geom = "text",
+           label = "Palm ",
+           x = 2014,
+           y = 120000000,
+           hjust = "right",
+           family = "Siemens Slab",
+           color = "white",
+           fontface = "bold") +
+  annotate(geom = "text",
+           label = "Soybean ",
+           x = 2014,
+           y = 25000000,
+           hjust = "right",
+           family = "Siemens Slab",
+           color = "white",
+           fontface = "bold") +
+  annotate(geom = "text",
+           label = "Rapeseed ",
+           x = 2014,
+           y = -52000000,
+           hjust = "right",
+           family = "Siemens Slab",
+           color = "white",
+           fontface = "bold",
+           angle = -10) +
+  annotate(geom = "text",
+           label = "Sunflower ",
+           x = 2014,
+           y = -97000000,
+           hjust = "right",
+           family = "Siemens Slab",
+           color = "white",
+           fontface = "bold",
+           angle = -15) +
+  annotate(geom = "text",
+           label = "Other ",
+           x = 2014,
+           y = -150000000,
+           hjust = "right",
+           family = "Siemens Slab",
+           color = "white",
+           fontface = "bold",
+           angle = -20) +
+  annotate(geom = "label",
+           x = 1970,
+           y = -150000000,
+           label = "Stream height is total\nannual production",
+           label.size = 0,
+           fill = dd_orange,
+           alpha = 0.25,
+           family = "Siemens Slab",
+           fontface = "bold") +
+  annotate(geom = "label",
+           x = 1968,
+           y = 100000000,
+           label = "41 MM\nin 1961",
+           label.size = 0,
+           fill = dd_orange,
+           alpha = 0.25,
+           family = "Siemens Slab",
+           fontface = "bold") +
+  annotate(geom = "label",
+           x = 1992,
+           y = 150000000,
+           label = "379 MM\nin 2014",
+           label.size = 0,
+           fill = dd_orange,
+           alpha = 0.25,
+           family = "Siemens Slab",
+           fontface = "bold") +
+  annotate(geom = "curve",
+           x = 1965.5,
+           y = 100000000,
+           xend = 1961,
+           yend = 25000000,
+           size = 1.1,
+           arrow = arrow(length = unit(3, "mm")),
+           curvature = 0.3) +
+  annotate(geom = "curve",
+           x = 1994.5,
+           y = 160000000,
+           xend = 2012,
+           yend = 190000000,
+           size = 1.1,
+           arrow = arrow(length = unit(3, "mm")),
+           curvature = -0.15)
+```
+
+![](tidydeforestation_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+``` r
+# 41 mm in 1961
+# 379 mm in 2014
+
+ggsave("tidytuesday15.png",
+       width = 9,
+       height = 6,
+       units = "in",
+       dpi = 500)
+```
