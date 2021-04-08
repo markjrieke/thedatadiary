@@ -1,4 +1,5 @@
 # load fonts ----
+library(ggtext)
 extrafont::loadfonts(device = "win")
 
 # dd colors ! ----
