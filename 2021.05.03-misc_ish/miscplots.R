@@ -113,7 +113,7 @@ tibble(
   labs(title = "Role of Government - Trend",
        subtitle = "<span style = 'color:#5565D7'>**Statement A:**</span> Government should do more to solve problems and help meet the needs of people.<br>
        <span style = 'color:#D75565'>**Statement B:**</span> Government is doing too many things better left to businesses and individuals.",
-       caption = "Source: NBC News Poll <br>April 2021 Hart Research Slides",
+       caption = "NBC News Poll April 2021 Hart Research Slides<br>Created by @markjrieke",
        x = NULL,
        y = NULL) +
   scale_color_manual(values = c(dd_blue,
