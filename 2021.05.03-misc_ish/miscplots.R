@@ -120,7 +120,7 @@ tibble(
                                 dd_red)) +
   scale_fill_manual(values = c(dd_blue,
                                dd_red)) +
-  geom_vline(xintercept = as.Date("2000-01-01"),
+  geom_vline(xintercept = as.Date("2001-01-01"),
              linetype = "dashed") +
   geom_vline(xintercept = as.Date("2009-01-01"),
              linetype = "dashed") +
