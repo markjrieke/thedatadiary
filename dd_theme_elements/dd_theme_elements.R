@@ -15,15 +15,17 @@ dd_gray <- "#5E6264"
 dd_green <- "#65D755"
 
 # dd theme ! ----
+dd_font <- "Corbel Light"
+  
 dd_theme <- theme(
   text = element_text(color = dd_black),
-  plot.title = element_markdown(family = "Siemens Slab", face = "bold", size = 18),
-  plot.subtitle = element_markdown(family = "Siemens Slab", size = 14),
-  plot.caption = element_markdown(family = "Siemens Slab"),
-  legend.text = element_markdown(family = "Siemens Slab"),
-  legend.title = element_markdown(family = "Siemens Slab"),
-  axis.title = element_markdown(family = "Siemens Slab", color = dd_black),
-  axis.text = element_markdown(family = "Siemens Slab", color = dd_black),
+  plot.title = element_markdown(family = dd_font, face = "bold", size = 18),
+  plot.subtitle = element_markdown(family = dd_font, size = 14),
+  plot.caption = element_markdown(family = dd_font),
+  legend.text = element_markdown(family = dd_font),
+  legend.title = element_markdown(family = dd_font),
+  axis.title = element_markdown(family = dd_font, color = dd_black),
+  axis.text = element_markdown(family = dd_font, color = dd_black),
   plot.title.position = "plot",
   panel.background = element_rect(fill = dd_cream),
   axis.line.x.bottom = element_line(color = dd_black),
