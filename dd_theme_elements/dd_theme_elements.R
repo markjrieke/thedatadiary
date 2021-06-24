@@ -15,7 +15,10 @@ dd_gray <- "#5E6264"
 dd_green <- "#65D755"
 
 # dd theme ! ----
-dd_font <- "Corbel Light"
+
+# must have below font installed & added with 
+# extrafont::font_import(paths = C:/path/to/font/location)
+dd_font <- "Roboto Slab Light"
   
 dd_theme <- theme(
   text = element_text(color = dd_black),
