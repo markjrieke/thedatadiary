@@ -462,11 +462,12 @@ f_cpvi %>%
              linetype = "dashed", 
              color = dd_black) +
   dd_theme +
-  scale_x_continuous(breaks = c(1960, 2020)) +
+  scale_x_continuous(breaks = c(1960, 2000),
+                     labels = c("'60", "'00")) +
   facet_geo(~ state, 
             grid = "us_state_without_DC_grid3",
             label = "code") +
-  theme(strip.text = element_text(family = dd_font, color = "white"),
+  theme(strip.text = element_text(family = dd_font, color = "white", face = "bold"),
         strip.background = element_rect(fill = dd_gray),
         axis.text.y = element_blank(),
         axis.ticks.y = element_blank()) +
@@ -478,8 +479,8 @@ f_cpvi %>%
 
 # save
 ggsave("2021.06.27-blexas/p3.png",
-       width = 9,
-       height = 6,
+       width = 12,
+       height = 8,
        units = "in",
        dpi = 500)
 
