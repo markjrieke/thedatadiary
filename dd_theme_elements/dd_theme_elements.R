@@ -18,7 +18,8 @@ dd_green <- "#65D755"
 
 # must have below font installed & added with 
 # extrafont::font_import(paths = C:/path/to/font/location)
-dd_font <- "Roboto Slab Light"
+dd_font <- "Roboto Slab"
+dd_font_light <- "Roboto Slab"
   
 dd_theme <- theme(
   text = element_text(color = dd_black),
