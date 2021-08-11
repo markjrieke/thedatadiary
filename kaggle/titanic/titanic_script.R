@@ -273,7 +273,20 @@ f_titanic_test %>%
          Survived = .pred_class) %>%
   write_csv("kaggle/titanic/rieke_titanic_submission.csv")
 
+# look at the roc/accuracy for a post ----
+titanic_test %>%
+  bind_cols(
+    logistic_fit %>% predict(new_data = titanic_test, type = "class"),
+    logistic_fit %>% predict(new_data = titanic_test, type = "prob")
+  ) %>%
+  roc_auc(truth = survived, estimate = .pred_0)
 
+titanic_test %>%
+  bind_cols(
+    forest_fit %>% predict(new_data = titanic_test, type = "class"),
+    forest_fit %>% predict(new_data = titanic_test, type = "prob")
+  ) %>%
+  roc_auc(truth = survived, estimate = .pred_0)
 
 
 
