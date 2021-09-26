@@ -33,3 +33,7 @@ knitr::opts_chunk$set(echo = TRUE)
 * approval ratings: taken from 538. Last day approval of previous president listed (for reelected incumbents, was their 4-year mark approval rating). Nixon & Kennedy did not finish their terms - Ford & Johnson's approval ratings were used to fill in the gaps. For Johnson, the previous president's ratings were considered to be his approval ratings on the 350th day of his term (election was 350 days after Kennedy was assassinated). 
 * real gdp growth since last election - taken from the July GDP report of the election year
 * inflation since last election - taken from the October seasonally adjusted CPI value from the election year. 
+
+### Miscellaneous notes
+
+* Congressional districts are ignored for the purposes of this exercise (i.e., only looking at the statewide results for ME & NE)

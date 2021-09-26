@@ -1,208 +1,212 @@
 state,state_map
  Alabama,Alabama
- Alaska,Alaska
- Arizona,Arizona
- Arkansas,Arkansas
- California,California
- Colorado,Colorado
- Connecticut,Connecticut
- Delaware,Delaware
- District of Columbia,District of Columbia
- Florida,Florida
- Georgia,Georgia
- Hawaii,Hawaii
- Idaho,Idaho
- Illinois,Illinois
- Indiana,Indiana
- Iowa,Iowa
- Kansas,Kansas
- Kentucky,Kentucky
- Louisiana,Louisiana
- Maine,Maine
- Maryland,Maryland
- Massachusetts,Massachusetts
- Michigan,Michigan
- Minnesota,Minnesota
- Mississippi,Mississippi
- Missouri,Missouri
- Montana,Montana
- Nebraska,Nebraska
- Nevada,Nevada
- New Hampshire,New Hampshire
- New Jersey,New Jersey
- New Mexico,New Mexico
- New York,New York
- North Carolina,North Carolina
- North Dakota,North Dakota
- Ohio,Ohio
- Oklahoma,Oklahoma
- Oregon,Oregon
- Pennsylvania,Pennsylvania
- Puerto Rico,Puerto Rico
- Rhode Island,Rhode Island
- South Carolina,South Carolina
- South Dakota,South Dakota
- Tennessee,Tennessee
- Texas,Texas
- Utah,Utah
- Vermont,Vermont
- Virginia,Virginia
- Washington,Washington
- West Virginia,West Virginia
- Wisconsin,Wisconsin
- Wyoming,Wyoming
+ALABAMA,Alabama
 Alabama,Alabama
 Alabama Alabama,Alabama
+ Alaska,Alaska
+ALASKA,Alaska
 Alaska,Alaska
 Alaska Alaska,Alaska
+ Arizona,Arizona
 Arizona,Arizona
+ARIZONA,Arizona
 Arizona Arizona,Arizona
+ Arkansas,Arkansas
 Arkansas,Arkansas
+ARKANSAS,Arkansas
 Arkansas Arkansas,Arkansas
+ California,California
 California,California
+CALIFORNIA,California
 California California,California
+ Colorado,Colorado
 Colorado,Colorado
+COLORADO,Colorado
 Colorado Colorado,Colorado
+ Connecticut,Connecticut
 Connecticut,Connecticut
+CONNECTICUT,Connecticut
 Connecticut Connecticut,Connecticut
+ Delaware,Delaware
 Delaware,Delaware
+DELAWARE,Delaware
 Delaware Delaware,Delaware
+ District of Columbia,District of Columbia
+D.C.,District of Columbia
 District of Columbia,District of Columbia
+DISTRICT OF COLUMBIA,District of Columbia
+"Washington, D.C. District of Columbia",District of Columbia
+ Florida,Florida
 Florida,Florida
+FLORIDA,Florida
 Florida Florida,Florida
+ Georgia,Georgia
 Georgia,Georgia
+GEORGIA,Georgia
 Georgia (U.S. state) Georgia,Georgia
+ Hawaii,Hawaii
 Hawaii,Hawaii
+HAWAII,Hawaii
 Hawaii Hawaii,Hawaii
+ Idaho,Idaho
 Idaho,Idaho
+IDAHO,Idaho
 Idaho Idaho,Idaho
+ Illinois,Illinois
 Illinois,Illinois
+ILLINOIS,Illinois
 Illinois Illinois,Illinois
+ Indiana,Indiana
 Indiana,Indiana
+INDIANA,Indiana
 Indiana Indiana,Indiana
+ Iowa,Iowa
 Iowa,Iowa
+IOWA,Iowa
 Iowa Iowa,Iowa
+ Kansas,Kansas
 Kansas,Kansas
+KANSAS,Kansas
 Kansas Kansas,Kansas
+ Kentucky,Kentucky
 Kentucky,Kentucky
+KENTUCKY,Kentucky
 Kentucky Kentucky,Kentucky
+ Louisiana,Louisiana
 Louisiana,Louisiana
+LOUISIANA,Louisiana
 Louisiana Louisiana,Louisiana
+ Maine,Maine
 Maine,Maine
+MAINE,Maine
+Maine †,Maine
 Maine Maine,Maine
+ Maryland,Maryland
 Maryland,Maryland
+MARYLAND,Maryland
 Maryland Maryland,Maryland
+ Massachusetts,Massachusetts
 Massachusetts,Massachusetts
+MASSACHUSETTS,Massachusetts
 Massachusetts Massachusetts,Massachusetts
+ Michigan,Michigan
 Michigan,Michigan
+MICHIGAN,Michigan
 Michigan Michigan,Michigan
+ Minnesota,Minnesota
 Minnesota,Minnesota
+MINNESOTA,Minnesota
 Minnesota Minnesota,Minnesota
+ Mississippi,Mississippi
 Mississippi,Mississippi
+MISSISSIPPI,Mississippi
 Mississippi Mississippi,Mississippi
+ Missouri,Missouri
 Missouri,Missouri
+MISSOURI,Missouri
 Missouri Missouri,Missouri
+ Montana,Montana
 Montana,Montana
+MONTANA,Montana
 Montana Montana,Montana
+ Nebraska,Nebraska
 Nebraska,Nebraska
+NEBRASKA,Nebraska
 Nebraska Nebraska,Nebraska
+ Nevada,Nevada
 Nevada,Nevada
+NEVADA,Nevada
 Nevada Nevada,Nevada
+ New Hampshire,New Hampshire
 New Hampshire,New Hampshire
+NEW HAMPSHIRE,New Hampshire
 New Hampshire New Hampshire,New Hampshire
+ New Jersey,New Jersey
 New Jersey,New Jersey
+NEW JERSEY,New Jersey
 New Jersey New Jersey,New Jersey
+ New Mexico,New Mexico
 New Mexico,New Mexico
+NEW MEXICO,New Mexico
 New Mexico New Mexico,New Mexico
+ New York,New York
 New York,New York
+NEW YORK,New York
 New York (state) New York,New York
+ North Carolina,North Carolina
 North Carolina,North Carolina
+NORTH CAROLINA,North Carolina
 North Carolina North Carolina,North Carolina
+ North Dakota,North Dakota
 North Dakota,North Dakota
+NORTH DAKOTA,North Dakota
 North Dakota North Dakota,North Dakota
+ Ohio,Ohio
 Ohio,Ohio
+OHIO,Ohio
 Ohio Ohio,Ohio
+ Oklahoma,Oklahoma
 Oklahoma,Oklahoma
+OKLAHOMA,Oklahoma
 Oklahoma Oklahoma,Oklahoma
+ Oregon,Oregon
 Oregon,Oregon
+OREGON,Oregon
 Oregon Oregon,Oregon
+ Pennsylvania,Pennsylvania
 Pennsylvania,Pennsylvania
+PENNSYLVANIA,Pennsylvania
 Pennsylvania Pennsylvania,Pennsylvania
+ Puerto Rico,Puerto Rico
 Puerto Rico,Puerto Rico
 Puerto Rico Puerto Rico,Puerto Rico
+Maine-1,Remove
+Maine-2,Remove
+ Rhode Island,Rhode Island
 Rhode Island,Rhode Island
-Rhode Island Rhode Island,Rhode Island
-South Carolina,South Carolina
-South Carolina South Carolina,South Carolina
-South Dakota,South Dakota
-South Dakota South Dakota,South Dakota
-Tennessee,Tennessee
-Tennessee Tennessee,Tennessee
-Texas,Texas
-Texas Texas,Texas
-Utah,Utah
-Utah Utah,Utah
-Vermont,Vermont
-Vermont Vermont,Vermont
-Virginia,Virginia
-Virginia Virginia,Virginia
-Washington,Washington
-Washington (state) Washington,Washington
-"Washington, D.C. District of Columbia",District of Columbia
-West Virginia,West Virginia
-West Virginia West Virginia,West Virginia
-Wisconsin,Wisconsin
-Wisconsin Wisconsin,Wisconsin
-Wyoming,Wyoming
-Wyoming Wyoming,Wyoming
-ALABAMA,Alabama
-ALASKA,Alaska
-ARIZONA,Arizona
-ARKANSAS,Arkansas
-CALIFORNIA,California
-COLORADO,Colorado
-CONNECTICUT,Connecticut
-DELAWARE,Delaware
-DISTRICT OF COLUMBIA,District of Columbia
-FLORIDA,Florida
-GEORGIA,Georgia
-HAWAII,Hawaii
-IDAHO,Idaho
-ILLINOIS,Illinois
-INDIANA,Indiana
-IOWA,Iowa
-KANSAS,Kansas
-KENTUCKY,Kentucky
-LOUISIANA,Louisiana
-MAINE,Maine
-MARYLAND,Maryland
-MASSACHUSETTS,Massachusetts
-MICHIGAN,Michigan
-MINNESOTA,Minnesota
-MISSISSIPPI,Mississippi
-MISSOURI,Missouri
-MONTANA,Montana
-NEBRASKA,Nebraska
-NEVADA,Nevada
-NEW HAMPSHIRE,New Hampshire
-NEW JERSEY,New Jersey
-NEW MEXICO,New Mexico
-NEW YORK,New York
-NORTH CAROLINA,North Carolina
-NORTH DAKOTA,North Dakota
-OHIO,Ohio
-OKLAHOMA,Oklahoma
-OREGON,Oregon
-PENNSYLVANIA,Pennsylvania
 RHODE ISLAND,Rhode Island
+Rhode Island Rhode Island,Rhode Island
+ South Carolina,South Carolina
+South Carolina,South Carolina
 SOUTH CAROLINA,South Carolina
+South Carolina South Carolina,South Carolina
+ South Dakota,South Dakota
+South Dakota,South Dakota
 SOUTH DAKOTA,South Dakota
+South Dakota South Dakota,South Dakota
+ Tennessee,Tennessee
+Tennessee,Tennessee
 TENNESSEE,Tennessee
+Tennessee Tennessee,Tennessee
+ Texas,Texas
+Texas,Texas
 TEXAS,Texas
+Texas Texas,Texas
+ Utah,Utah
+Utah,Utah
 UTAH,Utah
+Utah Utah,Utah
+ Vermont,Vermont
+Vermont,Vermont
 VERMONT,Vermont
+Vermont Vermont,Vermont
+ Virginia,Virginia
+Virginia,Virginia
 VIRGINIA,Virginia
+Virginia Virginia,Virginia
+ Washington,Washington
+Washington,Washington
 WASHINGTON,Washington
+Washington (state) Washington,Washington
+ West Virginia,West Virginia
+West Virginia,West Virginia
 WEST VIRGINIA,West Virginia
+West Virginia West Virginia,West Virginia
+ Wisconsin,Wisconsin
+Wisconsin,Wisconsin
 WISCONSIN,Wisconsin
+Wisconsin Wisconsin,Wisconsin
+ Wyoming,Wyoming
+Wyoming,Wyoming
 WYOMING,Wyoming
+Wyoming Wyoming,Wyoming

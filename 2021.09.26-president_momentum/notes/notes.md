@@ -38,3 +38,8 @@
     of the election year
 -   inflation since last election - taken from the October seasonally
     adjusted CPI value from the election year.
+
+### Miscellaneous notes
+
+-   Congressional districts are ignored for the purposes of this
+    exercise (i.e., only looking at the statewide results for ME & NE)
