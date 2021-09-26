@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # libraries 
 library(tidyverse)
 library(tidymodels)
+library(vip)
 
 # themes
 source("https://raw.githubusercontent.com/markjrieke/thedatadiary/main/dd_theme_elements/dd_theme_elements.R")
@@ -73,11 +74,84 @@ read_csv("data/model_data/model_data.csv") %>%
   filter(state == "Texas") %>%
   knitr::kable(caption = "Model Data (Filtered to Texas")
 ```
+
+Let's look into how some of these variables relate to each other!
+
+```{r EDA-1, message=FALSE}
+elections <- read_csv("data/model_data/model_data.csv")
+
+elections %>%
+  select(d_pct, ends_with("cycle")) %>%
+  pivot_longer(cols = ends_with("cycle"),
+               names_to = "cycle",
+               values_to = "momentum") %>%
+  ggplot(aes(x = momentum,
+             y = d_pct)) +
+  geom_point(alpha = 0.2,
+             color = "midnightblue") +
+  geom_smooth(method = "lm", se = FALSE) +
+  facet_wrap(~cycle) +
+  theme(legend.position = "none")
+  
+```
+
+Right off the bat, it looks like there *is* a relationship between the newly created momentum variables and the democratic voteshare, though *how* important each variable is to the overall model remains to be determined. As it stands now, however, we can't simply rule out momentum as a factor prior to analysis, since there clearly is some correlation with vote outcome. 
+
+```{r EDA-2}
+elections %>%
+  select(d_pct, aapi, black, hispanic, white, native_american) %>%
+  pivot_longer(cols = -d_pct,
+               names_to = "demo",
+               values_to = "demo_pct") %>%
+  ggplot(aes(x = demo_pct,
+             y = d_pct)) +
+  geom_point(alpha = 0.2,
+             color = "midnightblue") +
+  facet_wrap(~demo, scales = "free_x") +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme(legend.position = "none")
+
+```
+
+Looking at the how demographics influence outcomes, there may be an opportunity for some interesting [feature engineering](https://en.wikipedia.org/wiki/Feature_engineering) later down the line. That being said, there is likely a good amount of redundant information in these charts, since the total percentage always has to add up to 100%.
+
+```{r EDA-3}
+elections %>%
+  select(d_pct, inflation, gdp_growth) %>%
+  pivot_longer(cols = -d_pct,
+               names_to = "metric",
+               values_to = "value") %>%
+  ggplot(aes(x = value,
+             y = d_pct)) +
+  geom_point(alpha = 0.2,
+             color = "midnightblue") +
+  facet_wrap(~metric, scales = "free_x") +
+  theme(legend.position = "none")
+```
+
+It looks like there's a bit of non-linearity between the economic factors & the democratic voteshare. Since these two measurements are showing the change in GDP & inflation over the previous 4 years, it may make sense to check for an [interaction](https://en.wikipedia.org/wiki/Interaction_(statistics)) with the variable `previous_president_party`.
+
+```{r EDA-4}
+elections %>%
+  select(d_pct, inflation, gdp_growth, previous_presidential_party) %>%
+  pivot_longer(cols = c(inflation, gdp_growth),
+               names_to = "metric",
+               values_to = "value") %>%
+  ggplot(aes(x = value,
+             y = d_pct,
+             color = previous_presidential_party)) +
+  geom_point(alpha = 0.2) +
+  facet_wrap(~metric, scales = "free_x") +
+  scale_color_manual(values = c(dd_blue, dd_red)) +
+  theme(legend.position = "none")
+```
+
+
 Using all the variables listed above, I'll train the following models to predict the Democratic voteshare (`d_pct`) in each state and check the importance of each variable along the way:
 
-* **Basic Logistic Regression**
-* **Regularized Logistic Regression**
-* **Tuned Logistic Regression**
+* Basic Logistic Regression
+* Regularized Logistic Regression
+* Tuned Logistic Regression
 
 
 
