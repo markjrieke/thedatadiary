@@ -37,7 +37,9 @@ read_csv("data/mit_labs_1976_2020_president.csv") %>%
   geom_line(size = 1,
             alpha = 0.75) +
   theme_minimal(base_family = "Roboto Slab") +
-  theme(plot.subtitle = element_markdown(family = "Roboto Slab")) +
+  theme(plot.subtitle = element_markdown(family = "Roboto Slab"),
+        plot.background = element_rect(fill = "white",
+                                       color = "white")) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   geom_hline(yintercept = 0.5,
              color = dd_gray,
@@ -66,4 +68,5 @@ That certainly *feels* like a compelling narrative, but I'm skeptical as to whet
 
 I've put together a dataset for examining presidential elections at the state level (for information on the dataset, you can reference the [notes](https://github.com/markjrieke/thedatadiary/tree/main/2021.09.26-president_momentum/notes); to see how it was put together, reference [this script](https://github.com/markjrieke/thedatadiary/blob/main/2021.09.26-president_momentum/scripts/data_wrangle.R)). 
 
+yee
 

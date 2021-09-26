@@ -18,3 +18,13 @@ that momentum itself offers little explanatory power. To test this
 hunch, I’ll build and evaluate a few machine learning models with R’s
 suite of machine learning packages,
 [`tidymodels`](https://www.tidymodels.org/).
+
+## Exploring the Data
+
+I’ve put together a dataset for examining presidential elections at the
+state level (for information on the dataset, you can reference the
+[notes](https://github.com/markjrieke/thedatadiary/tree/main/2021.09.26-president_momentum/notes);
+to see how it was put together, reference [this
+script](https://github.com/markjrieke/thedatadiary/blob/main/2021.09.26-president_momentum/scripts/data_wrangle.R)).
+
+yee
