@@ -48,7 +48,7 @@ read_csv("data/mit_labs_1976_2020_president.csv") %>%
   theme(legend.position = "none",
         plot.title.position = "plot") +
   labs(title = "Momentum in Presidential Elections",
-       subtitle = "Two-party voteshare in <span style=color:'#5565D7'>**Florida**</span> and <span style=color:'#65D755'>**Texas**</span> since 1976",
+       subtitle = "Democratic Two-party Presidential Voteshare in <span style=color:'#5565D7'>**Florida**</span> and <span style=color:'#65D755'>**Texas**</span> since 1976",
        x = NULL,
        y = NULL)
 
@@ -60,6 +60,8 @@ ggsave("pics/tx_fl_2pv.png",
 ```
 
 ![](pics/tx_fl_2pv.png)
+That certainly *feels* like a compelling narrative, but I'm skeptical as to whether these trends can be explained by momentum My hunch is that other factors, like changing demographics, national sentiment, & presidential approval, can explain these trends & that momentum itself offers little explanatory power. To test this hunch, I'll build and evaluate a few machine learning models with R's suite of machine learning packages, [`tidymodels`](https://www.tidymodels.org/). 
+
 
 
 
