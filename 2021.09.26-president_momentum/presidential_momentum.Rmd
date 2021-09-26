@@ -1,0 +1,65 @@
+---
+title: "Momentum in Presidential Elections"
+author: "Mark Rieke"
+date: "9/26/2021"
+output: rmarkdown::github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# libraries 
+library(tidyverse)
+library(tidymodels)
+
+# themes
+source("https://raw.githubusercontent.com/markjrieke/thedatadiary/main/dd_theme_elements/dd_theme_elements.R")
+
+# path setup
+# path <- "2021.09.26-president_momentum/"
+```
+
+When discussing elections, horserace coverage tends to frame a state's expected outcome based on how it's most recent voting patterns compare to previous elections. This is, in part, why Florida is framed as "trending towards Republicans" and Texas is framed as "trending towards Democrats," despite the fact that in the 2020 presidential election, Trump won Texas by a wider margin than Florida!
+
+```{r fl/tx plot, include=FALSE}
+read_csv("data/mit_labs_1976_2020_president.csv") %>%
+  filter(state %in% c("FLORIDA", "TEXAS"),
+         party_simplified %in% c("DEMOCRAT", "REPUBLICAN")) %>%
+  select(year, state, candidatevotes, party_simplified) %>%
+  group_by(year, state) %>%
+  mutate(dem_pct = candidatevotes/sum(candidatevotes)) %>%
+  filter(party_simplified == "DEMOCRAT") %>%
+  ungroup() %>%
+  select(year, state, dem_pct) %>%
+  ggplot(aes(x = year,
+             y = dem_pct,
+             color = state)) +
+  geom_line(size = 1,
+            alpha = 0.75) +
+  theme_minimal(base_family = "Roboto Slab") +
+  theme(plot.subtitle = element_markdown(family = "Roboto Slab")) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  geom_hline(yintercept = 0.5,
+             color = dd_gray,
+             size = 1,
+             linetype = "dashed",
+             alpha = 0.2) +
+  scale_color_manual(values = c(dd_blue, dd_green)) +
+  theme(legend.position = "none",
+        plot.title.position = "plot") +
+  labs(title = "Momentum in Presidential Elections",
+       subtitle = "Two-party voteshare in <span style=color:'#5565D7'>**Florida**</span> and <span style=color:'#65D755'>**Texas**</span> since 1976",
+       x = NULL,
+       y = NULL)
+
+ggsave("pics/tx_fl_2pv.png",
+       width = 9,
+       height = 6,
+       units = "in",
+       dpi = 500)
+```
+
+![](pics/tx_fl_2pv.png)
+
+
+
