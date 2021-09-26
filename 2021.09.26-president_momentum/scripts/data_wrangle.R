@@ -123,6 +123,20 @@ economics <-
 # clean up environment
 rm(econ_cpi, econ_gdp)
 
+# wrangle election results ----
+
+# recent elections
+prez_mit %>%
+  left_join(help_state, by = "state") %>%
+  filter(candidate != "OTHER",
+         !is.na(candidate),
+         writein == FALSE) %>%
+  select(year, state_map, party_detailed, candidatevotes) %>%
+  filter(party_detailed %in% c("DEMOCRAT", "REPUBLICAN")) %>%
+  pivot_wider(names_from = party_detailed,
+              values_from = candidatevotes) %>%
+  rename_with(str_to_lower) %>%
+  mutate(d_pct = democrat/(democrat + republican))
 
 
 
