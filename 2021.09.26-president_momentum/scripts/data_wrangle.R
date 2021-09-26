@@ -1,5 +1,6 @@
 # libraries ----
 library(tidyverse)
+library(lubridate)
 
 # set path ----
 path <- "2021.09.26-president_momentum/"
@@ -85,7 +86,42 @@ demographics <-
   pivot_wider(names_from = demo,
               values_from = interpolated_pct)
 
+# wrangle economics ----
 
+# cpi wrangle
+econ_cpi <- 
+  econ_cpi %>%
+  rename_with(str_to_lower) %>%
+  mutate(date = mdy(date)) %>%
+  filter(date > ymd("1950-01-01")) %>%
+  mutate(month = month(date),
+         year = year(date)) %>%
+  filter(month == 10,
+         year %in% seq(1952, 2020, 4)) %>%
+  mutate(inflation = cpiaucsl/lag(cpiaucsl) - 1) %>%
+  select(year, inflation)
+
+# gdp wrangle
+econ_gdp <- 
+  econ_gdp %>%
+  rename_with(str_to_lower) %>%
+  mutate(date = mdy(date)) %>%
+  filter(date > ymd("1950-01-01")) %>%
+  mutate(month = month(date),
+         year = year(date)) %>%
+  filter(month == 7,
+         year %in% seq(1952, 2020, 4)) %>%
+  mutate(gdp_growth = gdpc1/lag(gdpc1) - 1) %>%
+  select(year, gdp_growth)
+
+# merge
+economics <- 
+  bind_cols(econ_cpi, econ_gdp) %>%
+  select(-year...3) %>%
+  rename(year = year...1)
+
+# clean up environment
+rm(econ_cpi, econ_gdp)
 
 
 
