@@ -126,7 +126,8 @@ rm(econ_cpi, econ_gdp)
 # wrangle election results ----
 
 # recent elections
-prez_mit %>%
+prez_mit <- 
+  prez_mit %>%
   left_join(help_state, by = "state") %>%
   filter(candidate != "OTHER",
          !is.na(candidate),
@@ -136,8 +137,71 @@ prez_mit %>%
   pivot_wider(names_from = party_detailed,
               values_from = candidatevotes) %>%
   rename_with(str_to_lower) %>%
-  mutate(d_pct = democrat/(democrat + republican))
+  mutate(d_pct = democrat/(democrat + republican)) %>%
+  select(year, state_map, d_pct) %>%
+  rename(state = state_map)
+
+# earlier elections
+prez_wiki <- 
+  prez_wiki %>%
+  rename_with(str_to_lower) %>%
+  rename_with(~str_replace(.x, " ", "_")) %>%
+  left_join(help_state, by = "state") %>%
+  filter(state_map != "Remove") %>%
+  select(year, state_map, democratic_votes, republican_votes) %>%   
+  mutate(democratic_votes = str_remove_all(democratic_votes, ","),
+         democratic_votes = as.numeric(democratic_votes),
+         d_pct = democratic_votes/(democratic_votes + republican_votes)) %>%
+  select(year, state_map, d_pct) %>%
+  rename(state = state_map)
+
+# merge
+elections <- 
+  bind_rows(prez_mit, prez_wiki)
+
+# clean up environment
+rm(prez_mit, prez_wiki)
+
+# wrangle national environment ----
+
+# wrangle
+national_results <- 
+  prez_nat %>%
+  rename_with(str_to_lower) %>%
+  rename_with(~str_replace_all(.x, " ", "_")) %>%
+  select(-winner, -party) %>%
+  mutate(d_pct_nat = democratic_votes/(democratic_votes + republican_votes)) %>%
+  select(-ends_with("votes"))
+
+# clean up environment
+rm(prez_nat)
+
+# wrangle into master frame ----
+
+# wrangle
+model_data <- 
+  elections %>%
+  
+  # add 1 & 2 cycle momentum
+  group_by(state) %>%
+  arrange(year) %>%
+  mutate(d_momentum_1_cycle = d_pct - lag(d_pct),
+         d_momentum_2_cycle = (d_pct - lag(d_pct, n = 2L))/2) %>%
+  drop_na() %>%
+  ungroup() %>%
+  
+  # add demographics
+  left_join(demographics, by = c("year", "state")) %>%
+  
+  # add economics
+  left_join(economics, by = "year") %>%
+  
+  # add national environment
+  left_join(national_results, by = "year")
+
+# write
+model_data %>%
+  write_csv(paste0(path, "data/model_data/model_data.csv"))
 
 
 
-                                            
