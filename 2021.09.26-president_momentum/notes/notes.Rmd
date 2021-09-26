@@ -26,3 +26,10 @@ knitr::opts_chunk$set(echo = TRUE)
 * prev prez net approval
 * real gdp growth since last election (q2 of election yr)
 * inflation since last election
+
+### Some notes on the variables
+
+* demographics: linear interpolation between decennial census reports used to get individual year demographics for each state. When unavailable, the most recent reported value was used (i.e., if for example Alabama didn't start tracking the % AAPI until 1960, then the 1960 value was used for 1950)
+* approval ratings: taken from 538. Last day approval of previous president listed (for reelected incumbents, was their 4-year mark approval rating). Nixon & Kennedy did not finish their terms - Ford & Johnson's approval ratings were used to fill in the gaps. For Johnson, the previous president's ratings were considered to be his approval ratings on the 350th day of his term (election was 350 days after Kennedy was assassinated). 
+* real gdp growth since last election - taken from the July GDP report of the election year
+* inflation since last election - taken from the October seasonally adjusted CPI value from the election year. 
