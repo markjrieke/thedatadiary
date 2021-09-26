@@ -78,7 +78,12 @@ demographics <-
 # clean up envirnoment
 rm(demo_aapi, demo_black, demo_hisp, demo_nat_amer, demo_white)
 
-
+# demographics master wrangle
+demographics <- 
+  demographics %>%
+  filter(year %in% seq(1952, 2020, 4)) %>%
+  pivot_wider(names_from = demo,
+              values_from = interpolated_pct)
 
 
 
