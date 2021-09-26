@@ -26,18 +26,28 @@
     used to get individual year demographics for each state. When
     unavailable, the most recent reported value was used (i.e., if for
     example Alabama didn’t start tracking the % AAPI until 1960, then
-    the 1960 value was used for 1950)
--   approval ratings: taken from 538. Last day approval of previous
-    president listed (for reelected incumbents, was their 4-year mark
-    approval rating). Nixon & Kennedy did not finish their terms - Ford
-    & Johnson’s approval ratings were used to fill in the gaps. For
-    Johnson, the previous president’s ratings were considered to be his
-    approval ratings on the 350th day of his term (election was 350 days
-    after Kennedy was assassinated).
+    the 1960 value was used for 1950). Demographics are sourced from
+    [Wikipedia](https://en.wikipedia.org/wiki/Historical_racial_and_ethnic_demographics_of_the_United_States).
+-   approval ratings: taken from
+    [538](https://projects.fivethirtyeight.com/biden-approval-rating/?ex_cid=rrpromo).
+    Last day approval of previous president listed (for reelected
+    incumbents, was their 4-year mark approval rating). Nixon & Kennedy
+    did not finish their terms - Ford & Johnson’s approval ratings were
+    used to fill in the gaps. For Johnson, the previous president’s
+    ratings were considered to be his approval ratings on the 350th day
+    of his term (election was 350 days after Kennedy was assassinated).
 -   real gdp growth since last election - taken from the July GDP report
-    of the election year
+    of the election year (accessed via
+    [FRED](https://fred.stlouisfed.org/series/GDPC1)).
 -   inflation since last election - taken from the October seasonally
-    adjusted CPI value from the election year.
+    adjusted CPI value from the election year (accessed via
+    [FRED](https://fred.stlouisfed.org/series/CPIAUCSL)).
+-   Individual state election results from 1976 onward are sourced from
+    the [MIT Election
+    Lab](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/42MVDX).
+    Prior presidential election results are taken from the year’s
+    respective [Wikipedia
+    Page](https://en.wikipedia.org/wiki/List_of_United_States_presidential_elections_by_popular_vote_margin#List).
 
 ### Miscellaneous notes
 
