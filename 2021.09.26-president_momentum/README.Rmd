@@ -66,7 +66,21 @@ That certainly *feels* like a compelling narrative, but I'm skeptical as to whet
 
 ## Exploring the Data
 
-I've put together a dataset for examining presidential elections at the state level (for information on the dataset, you can reference the [notes](https://github.com/markjrieke/thedatadiary/tree/main/2021.09.26-president_momentum/notes); to see how it was put together, reference [this script](https://github.com/markjrieke/thedatadiary/blob/main/2021.09.26-president_momentum/scripts/data_wrangle.R)). 
+I've put together a dataset for examining presidential elections at the state level since 1960 (for information on the dataset, you can reference the [notes](https://github.com/markjrieke/thedatadiary/tree/main/2021.09.26-president_momentum/notes); to see how it was put together, reference [this script](https://github.com/markjrieke/thedatadiary/blob/main/2021.09.26-president_momentum/scripts/data_wrangle.R)). In addition to the usual host of economic & demographic predictor variables, I've added two "momentum" variables - one showing the change in the democratic voteshare since the previous presidential election and another showing the change from two elections ago. 
 
-yee
+```{r model_data display, message=FALSE}
+read_csv("data/model_data/model_data.csv") %>%
+  filter(state == "Texas") %>%
+  knitr::kable(caption = "Model Data (Filtered to Texas")
+```
+Using all the variables listed above, I'll train the following models to predict the Democratic voteshare (`d_pct`) in each state and check the importance of each variable along the way:
+
+* **Basic Logistic Regression**
+* **Regularized Logistic Regression**
+* **Tuned Logistic Regression**
+
+
+
+
+
 
