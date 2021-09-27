@@ -2,10 +2,34 @@
 ## Mark to do
 
 -   finish out analysis
+    -   EDA
+    -   basic logistic regression
+        -   kitchen sink
+        -   no regularization
+        -   report vip
+    -   feature engineering
+        -   collinear features?
+        -   interactive features
+        -   non-linear features
+        -   non-normally distributed features (e.g., % of populations)
+            -   maybe inverse sigmoid function (i.e., stretch values
+                close to 0 out to infinity)
+            -   I don’t know if this is a thing though
+    -   regularized logistic regression
+        -   kitchen sink + features
+        -   default regularization
+        -   report vip
+    -   tuned logistic regression
+        -   kitchen sink + features
+        -   bootstrap or cvfold resamples?
+        -   regular grid or something fancier?
+        -   report vip
 -   update plots to be pretty pretty in github/the thing
 -   rewrite so that it looks like a human wrote it lol
     -   alternatively, write a less technically intense version for
         squarespace & link to the more technical version on github
+-   add “data dictionary” to the notes section
+-   clean up notes lol
 
 ## notes
 
