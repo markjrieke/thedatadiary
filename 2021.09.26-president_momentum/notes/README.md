@@ -1,4 +1,12 @@
 
+## Mark to do
+
+-   finish out analysis
+-   update plots to be pretty pretty in github/the thing
+-   rewrite so that it looks like a human wrote it lol
+    -   alternatively, write a less technically intense version for
+        squarespace & link to the more technical version on github
+
 ## notes
 
 ### Variables
