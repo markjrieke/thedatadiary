@@ -322,3 +322,44 @@ importance of each variable along the way:
 -   Basic Logistic Regression
 -   Regularized Logistic Regression (without any feature engineering)
 -   Tuned Logistic Regression (with feature engineering)
+
+## Modeling
+
+### Basic Logistic Regression
+
+Firstly, we’ll need to split the data into testing & training data
+
+``` r
+# set seed for reproducability
+set.seed(123)
+
+# split into testing & training data
+elections_split <- initial_split(elections, prop = 0.8)
+elections_train <- training(elections_split)
+elections_test <- testing(elections_split)
+```
+
+While we won’t be tuning this first model, it’ll be good to evaluate on
+a holdout set of data. We don’t want to use the testing data, so I’ll
+pull some cross validation resamples from the training set.
+
+``` r
+set.seed(10101)
+elections_folds <- vfold_cv(elections_train)
+```
+
+Now I can define a specification for the logistic regression. Setting
+the `glmnet::family` parameter to `binomial(link = "logit")` means that
+we can use a generalized linear model with a logistic link (aka, a
+logistic regression). The `parsnip::logistic_reg()` function only allows
+for the a logistic regression to be used for classification, which is
+not what we want in this case (we want to predict the actual voteshare
+outcome, not whether or not the democratic candidate won).
+
+``` r
+basic_spec <-
+  linear_reg(mode = "regression") %>%
+  set_engine("glmnet",
+             family = binomial(link = "logit"),
+             penalty = 0)
+```
