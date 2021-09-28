@@ -19,6 +19,7 @@ knitr::opts_chunk$set(echo = TRUE)
     * cvfold or bootstrap resamples?
     * gridregular grid or something fancier?
   * feature engineering
+    * feature EDA
     * collinear features?
     * interactive features
     * non-linear features

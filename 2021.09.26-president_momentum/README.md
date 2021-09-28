@@ -10,14 +10,57 @@ to previous elections. This is, in part, why Florida is framed as
 Democrats,” despite the fact that in the 2020 presidential election,
 Trump won Texas by a wider margin than Florida!
 
-![](pics/tx_fl_2pv.png) That certainly *feels* like a compelling
-narrative, but I’m skeptical as to whether these trends can be explained
-by momentum My hunch is that other factors, like changing demographics,
-national sentiment, & presidential approval, can explain these trends &
-that momentum itself offers little explanatory power. To test this
-hunch, I’ll build and evaluate a few machine learning models with R’s
-suite of machine learning packages,
-[`tidymodels`](https://www.tidymodels.org/).
+``` r
+read_csv("data/mit_labs_1976_2020_president.csv") %>%
+  filter(state %in% c("FLORIDA", "TEXAS"),
+         party_simplified %in% c("DEMOCRAT", "REPUBLICAN")) %>%
+  select(year, state, candidatevotes, party_simplified) %>%
+  group_by(year, state) %>%
+  mutate(dem_pct = candidatevotes/sum(candidatevotes)) %>%
+  filter(party_simplified == "DEMOCRAT") %>%
+  ungroup() %>%
+  select(year, state, dem_pct) %>%
+  ggplot(aes(x = year,
+             y = dem_pct,
+             color = state)) +
+  geom_line(size = 1,
+            alpha = 0.75) +
+  theme_minimal(base_family = "Roboto Slab") +
+  theme(plot.subtitle = element_markdown(family = "Roboto Slab"),
+        plot.background = element_rect(fill = "white",
+                                       color = "white")) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  geom_hline(yintercept = 0.5,
+             color = dd_gray,
+             size = 1,
+             linetype = "dashed",
+             alpha = 0.2) +
+  scale_color_manual(values = c(dd_blue, dd_green)) +
+  theme(legend.position = "none",
+        plot.title.position = "plot") +
+  labs(title = "Momentum in Presidential Elections",
+       subtitle = "Democratic Two-party Presidential Voteshare in <span style=color:'#5565D7'>**Florida**</span> and <span style=color:'#65D755'>**Texas**</span> since 1976",
+       x = NULL,
+       y = NULL)
+```
+
+![](README_files/figure-gfm/fl/tx%20plot-1.png)<!-- -->
+
+``` r
+ggsave("pics/tx_fl_2pv.png",
+       width = 9,
+       height = 6,
+       units = "in",
+       dpi = 500)
+```
+
+That certainly *feels* like a compelling narrative, but I’m skeptical as
+to whether these trends can be explained by momentum My hunch is that
+other factors, like changing demographics, national sentiment, &
+presidential approval, can explain these trends & that momentum itself
+offers little explanatory power. To test this hunch, I’ll build and
+evaluate a few machine learning models with R’s suite of machine
+learning packages, [`tidymodels`](https://www.tidymodels.org/).
 
 ## Exploring the Data
 
@@ -152,6 +195,51 @@ elections %>%
 ```
 
 ![](README_files/figure-gfm/EDA-4-1.png)<!-- -->
+
+Hmm - I’m not noticing any distinctly differentiable interactions
+between the economic variables, but may be worthwhile to check later.
+
+``` r
+elections %>%
+  select(d_pct, democratic_incumbent_run, republican_incumbent_running) %>%
+  pivot_longer(cols = -d_pct,
+               names_to = "party",
+               values_to = "incumbent") %>%
+  ggplot(aes(x = incumbent,
+             y = d_pct,
+             color = party)) +
+  geom_boxplot() +
+  geom_point(position = position_jitterdodge(),
+             alpha = 0.2) +
+  facet_wrap(~party) +
+  theme(legend.position = "none") +
+  scale_color_manual(values = c(dd_blue, dd_red))
+```
+
+![](README_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
+
+I wonder what this would look like with a third category for “no
+incumbent”
+
+``` r
+elections %>%
+  select(d_pct, democratic_incumbent_run, republican_incumbent_running) %>%
+  mutate(no_incumbent = if_else(democratic_incumbent_run == "No" & republican_incumbent_running == "No", "Yes", "No")) %>%
+  pivot_longer(cols = -d_pct,
+               names_to = "party",
+               values_to = "incumbent") %>%
+  ggplot(aes(x = incumbent,
+             y = d_pct,
+             color = party)) +
+  geom_boxplot() +
+  geom_point(position = position_jitterdodge(),
+             alpha = 0.2) +
+  facet_wrap(~party) +
+  theme(legend.position = "none") +
+  scale_color_manual(values = c(dd_blue, dd_purple, dd_red))
+```
+
+![](README_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
 Using all the variables listed above, I’ll train the following models to
 predict the Democratic voteshare (`d_pct`) in each state and check the
