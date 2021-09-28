@@ -7,6 +7,10 @@
         -   kitchen sink
         -   no regularization
         -   report vip
+    -   regularized linear regression
+        -   kitchen sink, no additional features
+        -   cvfold or bootstrap resamples?
+        -   gridregular grid or something fancier?
     -   feature engineering
         -   collinear features?
         -   interactive features
@@ -15,10 +19,6 @@
             -   maybe inverse sigmoid function (i.e., stretch values
                 close to 0 out to infinity)
             -   I don’t know if this is a thing though
-    -   regularized logistic regression
-        -   kitchen sink + features
-        -   default regularization
-        -   report vip
     -   tuned logistic regression
         -   kitchen sink + features
         -   bootstrap or cvfold resamples?
