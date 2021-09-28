@@ -145,8 +145,6 @@ elections %>%
   theme(legend.position = "none")
 ```
 
-    ## `geom_smooth()` using formula 'y ~ x'
-
 ![](README_files/figure-gfm/EDA-2-1.png)<!-- -->
 
 Looking at the how demographics influence outcomes, there may be an
@@ -241,10 +239,86 @@ elections %>%
 
 ![](README_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
+That may be a worthwhile feature to add in later on - it looks like
+there may be some meaningful information within “no incumbent.”
+
+``` r
+elections %>%
+  select(d_pct, starts_with("previous")) %>%
+  ggplot(aes(x = previous_presidential_party,
+             y = d_pct)) +
+  geom_boxplot() +
+  geom_point(alpha = 0.2,
+             color = "midnightblue",
+             position = position_jitter())
+```
+
+![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+
+Mildly surprised by this - I would have assumed there was a penalty for
+the previous president’s party. I guess, however, this isn’t taking into
+consideration incumbents running for reelection.
+
+``` r
+elections %>%
+  select(d_pct, starts_with("previous")) %>%
+  select(-previous_presidential_party) %>%
+  pivot_longer(cols = starts_with("previous"),
+               names_to = "rating_type",
+               values_to = "rating") %>%
+  ggplot(aes(x = rating,
+             y = d_pct)) +
+  geom_point(color = "midnightblue",
+             alpha = 0.2) +
+  facet_wrap(~rating_type,
+             scales = "free_x")
+```
+
+![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+Hmmm - let’s check for interaction with the previous presidential party
+
+``` r
+elections %>%
+  select(d_pct, starts_with("previous")) %>%
+  pivot_longer(cols = starts_with("previous_president_"),
+               names_to = "rating_type",
+               values_to = "rating") %>%
+  ggplot(aes(x = rating,
+             y = d_pct,
+             color = previous_presidential_party)) +
+  geom_point(alpha = 0.2) +
+  facet_wrap(~rating_type,
+             scales = "free_x") +
+  theme(legend.position = "none") +
+  geom_smooth(method = "lm", se = FALSE) +
+  scale_color_manual(values = c(dd_blue, dd_red))
+```
+
+![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+Definitely will want to fit an interactive term for each of the approval
+ratings!
+
+``` r
+elections %>%
+  select(d_pct, d_pct_nat) %>%
+  ggplot(aes(x = d_pct_nat,
+             y = d_pct)) +
+  geom_point(alpha = 0.2,
+             color = "midnightblue") +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+Obviously, an expected relationship. Let’s get on to the fun part:
+modeling. Here’s the basic game plan:
+
 Using all the variables listed above, I’ll train the following models to
 predict the Democratic voteshare (`d_pct`) in each state and check the
 importance of each variable along the way:
 
 -   Basic Logistic Regression
--   Regularized Logistic Regression
--   Tuned Logistic Regression
+-   Regularized Logistic Regression (without any feature engineering)
+-   Tuned Logistic Regression (with feature engineering)
