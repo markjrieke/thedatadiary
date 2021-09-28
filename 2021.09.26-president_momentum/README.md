@@ -345,7 +345,7 @@ pull some cross validation resamples from the training set.
 
 ``` r
 set.seed(10101)
-elections_folds <- vfold_cv(elections_train)
+elections_boot <- bootstraps(elections_train)
 ```
 
 Now I can define a specification for the logistic regression. Setting
@@ -358,8 +358,118 @@ outcome, not whether or not the democratic candidate won).
 
 ``` r
 basic_spec <-
-  linear_reg(mode = "regression") %>%
+  linear_reg(mode = "regression",
+             penalty = 0) %>%
   set_engine("glmnet",
-             family = binomial(link = "logit"),
-             penalty = 0)
+             family = binomial(link = "logit"))
 ```
+
+Now we can add a basic preprocessing recipe:
+
+``` r
+basic_rec <-
+  recipe(d_pct ~ ., data = elections_train) %>%
+  update_role(year, state, new_role = "id") %>%
+  step_normalize(all_numeric_predictors()) %>%
+  step_dummy(all_nominal_predictors())
+```
+
+Finally, Let’s fit & explore the results!
+
+``` r
+set.seed(1540)
+
+basic_rs <-
+  workflow() %>%
+  add_recipe(basic_rec) %>%
+  add_model(basic_spec) %>%
+  fit_resamples(resamples = elections_boot,
+                control = control_resamples(save_pred = TRUE))
+```
+
+Some problems with convergence on a few resamples - but let’s check
+metrics:
+
+``` r
+basic_rs %>%
+  collect_metrics()
+```
+
+    ## # A tibble: 2 x 6
+    ##   .metric .estimator   mean     n  std_err .config             
+    ##   <chr>   <chr>       <dbl> <int>    <dbl> <chr>               
+    ## 1 rmse    standard   0.0791    25 0.000636 Preprocessor1_Model1
+    ## 2 rsq     standard   0.460     25 0.00649  Preprocessor1_Model1
+
+``` r
+p_1 <- 
+  basic_rs %>%
+  collect_predictions() %>%
+  ggplot(aes(x = .pred,
+             y = d_pct,
+             color = id)) +
+  geom_point(alpha = 0.2) +
+  geom_abline(linetype = "dashed",
+              size = 0.8,
+              alpha = 0.5,
+              color = dd_gray) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  geom_smooth(method = "lm") +
+  facet_wrap(~id) 
+
+p_1
+```
+
+![](README_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+
+So pretty systematically, the basic regression is overestimating `d_pct`
+at lower percentage predictions and underestimating `d_pct` at higher
+percentage predictions (it’s not expected that this performs perfect
+right away!). Let’s see which variables are the most important in this
+basic model:
+
+``` r
+basic_vip <-
+  finalize_workflow(
+    workflow() %>% add_recipe(basic_rec) %>% add_model(basic_spec),
+    basic_rs %>% select_best("rmse", maximize = FALSE)
+  )
+
+basic_vip %>%
+  fit(elections_train) %>%
+  pull_workflow_fit() %>%
+  vi(lambda = 0) %>%
+  mutate(Variable = fct_reorder(Variable, Importance)) %>%
+  ggplot(aes(x = Variable,
+             y = Importance,
+             fill = Sign)) +
+  geom_col() +
+  coord_flip() +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+![](README_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+``` r
+basic_vip %>%
+  fit(elections_train) %>%
+  pull_workflow_fit() %>% 
+  vi(lambda = 0) %>%
+  mutate(Importance = if_else(Sign == "NEG", -1 * Importance, Importance),
+         Variable = fct_reorder(Variable, Importance)) %>%
+  ggplot(aes(x = Variable,
+             y = Importance,
+             fill = Sign)) +
+  geom_col() +
+  coord_flip() +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+![](README_files/figure-gfm/unnamed-chunk-14-2.png)<!-- -->
+
+We’re way overfitting here, but look at that! 1/2 cycle momentum
+actually *is* contributing! It’ll be interesting to see how this changes
+as we add in regularization & feature engineering.
