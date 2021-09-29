@@ -379,3 +379,38 @@ basic_vip %>%
 
 We're way overfitting here, but look at that! 1/2 cycle momentum actually *is* contributing! It'll be interesting to see how this changes as we add in regularization & feature engineering. 
 
+### Regularized Logistic Regression
+
+We'll be using the same recipe for the regularized regression, but we'll tune the `penalty` (how much the model penalizes/regularizes the addition of new predictors) and `mixture` (the proportion of lasso/ridge regularization the model will use) **hyperparameters**. Let's setup the recipe and spec.
+
+```{r}
+tune_rec <- basic_rec
+
+tune_spec <- 
+  linear_reg(mode = "regression",
+             penalty = tune(),
+             mixture = tune()) %>%
+  set_engine("glmnet",
+             family = binomial(link = "logit"))
+```
+
+Now, we'll tune a regular grid across our bootstrap resamples:
+
+```{r}
+# use multiple cores for tuning resamples
+doParallel::registerDoParallel()
+
+set.seed(999)
+
+tune_rs <-
+  workflow() %>%
+  add_model(tune_spec) %>%
+  add_recipe(tune_rec) %>%
+  tune_grid(resamples = elections_boot,
+            grid = grid_regular(penalty(), mixture()),
+            control = control_resamples(save_pred = TRUE))
+```
+
+
+
+
