@@ -111,7 +111,7 @@ seq(ymd("2021-06-06"), ymd("2021-11-02"), by = "days") %>%
         plot.title = element_markdown(size = 16),
         plot.subtitle = element_markdown(size = 14)) +
   labs(title = "**Virginia Governor's Race**",
-       subtitle = "<span style=color:'#5565D7'>**McAuliffe's**</span> and <span style=color:'#D75565'>**Youngkin's**</span> polling average",
+       subtitle = "<span style=color:'#5565D7'>**McAuliffe's**</span> and <span style=color:'#D75565'>**Youngkin's**</span> two-party polling average",
        caption = "Polls weighted by recency & sample size.\nData from @FiveThirtyEight",
        x = NULL,
        y = NULL) +
