@@ -1,0 +1,126 @@
+# script to create a plot of time-decay weighted polls of
+# VA Governor race with Bayesian updating 
+
+# libraries ----
+library(tidyverse)
+library(lubridate)
+
+# themes
+source("https://raw.githubusercontent.com/markjrieke/thedatadiary/main/dd_theme_elements/dd_theme_elements.R")
+
+# read in polls ----
+polls <- read_csv("https://projects.fivethirtyeight.com/polls-page/data/governor_polls.csv")
+
+# wrangle polls ----
+polls <- 
+  polls %>% 
+  filter(state == "Virginia") %>%
+  
+  # showing which metrics I'm not using!!!
+  
+  select(poll_id, question_id, answer, pct, sample_size, end_date, election_date, methodology, internal, partisan, answer, pct) %>%
+  
+  # get to 2pv responses
+  pivot_wider(names_from = answer,
+              values_from = pct) %>%
+  mutate(d_votes = round(McAuliffe/100 * sample_size),
+         r_votes = round(Youngkin/100 * sample_size),
+         t_votes = d_votes + r_votes) %>%
+  select(-McAuliffe, -Youngkin, -Blanding) %>%
+  
+  # reformat dates
+  mutate(end_date = mdy(end_date)) %>%
+  
+  # final cols
+  select(end_date, d_votes, r_votes, t_votes)
+
+# function for getting decayed weight ----
+poll_map <- function(inp_date) {
+  
+  polls %>%
+    filter(end_date <= inp_date) %>%
+    mutate(days_diff = as.numeric(inp_date - end_date),
+           d_pct = d_votes/t_votes,
+           b_lower = qbeta(0.025, d_votes, r_votes),
+           b_upper = qbeta(0.975, d_votes, r_votes),
+           plus_minus = b_upper - b_lower,
+           pm_wt = .062/plus_minus,
+           day_wt = 0.9 ^ days_diff,
+           alpha = d_votes * pm_wt * day_wt,
+           beta = r_votes * pm_wt * day_wt) %>%
+    summarize(alpha = sum(alpha) + 1,
+              beta = sum(beta) + 1) %>%
+    mutate(date = inp_date,
+           d_voteshare = alpha/(alpha + beta),
+           d_lower = qbeta(0.025, alpha, beta),
+           d_upper = qbeta(0.975, alpha, beta),
+           d_win = 1 - pbeta(0.5, alpha, beta),
+           r_voteshare = beta/(alpha + beta),
+           r_lower = qbeta(0.025, beta, alpha),
+           r_upper = qbeta(0.975, beta, alpha),
+           r_win = 1 - pbeta(0.5, beta, alpha)) %>%
+    left_join(polls, by = c("date" = "end_date")) %>%
+    mutate(poll_res = d_votes/t_votes) %>%
+    select(date, poll_res, 
+           d_voteshare, d_lower, d_upper, d_win, 
+           r_voteshare, r_lower, r_upper, r_win)  
+  
+}
+
+# plot polling results & confidence bands ----
+seq(ymd("2021-06-06"), ymd("2021-11-02"), by = "days") %>%
+  map_dfr(~poll_map(.x)) %>%
+  mutate(remove = if_else(date < Sys.Date() & is.na(poll_res), "remove", "x")) %>%
+  filter(remove != "remove") %>%
+  select(-remove) %>%
+  ggplot(aes(x = date)) +
+  theme_minimal(base_family = "Roboto Slab") +
+  geom_ribbon(aes(ymin = r_lower,
+                  ymax = r_upper),
+              fill = dd_red,
+              alpha = 0.2) +
+  geom_ribbon(aes(ymin = d_lower,
+                  ymax = d_upper),
+              fill = dd_blue,
+              alpha = 0.2) +
+  geom_hline(yintercept = 0.5,
+             linetype = "dashed",
+             size = 1,
+             color = dd_gray) +
+  geom_point(aes(y = poll_res,
+                 color = poll_res),
+             size = 3.5,
+             alpha = 0.8) +
+  scale_color_gradientn(colors = c(dd_red_dark, dd_red, "white", dd_blue, dd_blue_dark),
+                        values = c(0, 0.475, 0.5, 0.525, 1),
+                        limits = c(0, 1)) +
+  geom_line(aes(y = r_voteshare),
+            color = "white",
+            size = 3) +
+  geom_line(aes(y = d_voteshare),
+            color = "white",
+            size = 3) +
+  geom_line(aes(y = r_voteshare),
+            color = dd_red,
+            size = 1.25) +
+  geom_line(aes(y = d_voteshare),
+            color = dd_blue,
+            size = 1.25) +
+  theme(legend.position = "none",
+        plot.title.position = "plot",
+        plot.title = element_markdown(size = 16),
+        plot.subtitle = element_markdown(size = 14)) +
+  labs(title = "**Virginia Governor's Race**",
+       subtitle = "<span style=color:'#5565D7'>**McAuliffe's**</span> and <span style=color:'#D75565'>**Youngkin's**</span> polling average",
+       caption = "Polls weighted by recency & sample size.\nData from @FiveThirtyEight",
+       x = NULL,
+       y = NULL) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1))
+
+
+  
+  
+  
+
+
+
