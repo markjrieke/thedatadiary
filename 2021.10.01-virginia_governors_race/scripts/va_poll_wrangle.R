@@ -18,7 +18,6 @@ polls <-
   filter(state == "Virginia") %>%
   
   # showing which metrics I'm not using!!!
-  
   select(poll_id, question_id, answer, pct, sample_size, end_date, election_date, methodology, internal, partisan, answer, pct) %>%
   
   # get to 2pv responses
@@ -45,15 +44,28 @@ poll_map <- function(inp_date, final_date) {
     filter(end_date <= inp_date) %>%
     mutate(days_diff = as.numeric(final_date - end_date),
            d_pct = d_votes/t_votes,
+           
+           # 95% ci
            b_lower = qbeta(0.025, d_votes, r_votes),
            b_upper = qbeta(0.975, d_votes, r_votes),
            plus_minus = b_upper - b_lower,
+           
+           # polls are weighted by standard error against a sample
+           # size of 1000 (~+/- 3.1 se)
            pm_wt = .062/plus_minus,
+           
+           # poll weight decays as days pass by
            day_wt = 0.9 ^ days_diff,
+           
+           # each poll's contribution to the beta distribution
            alpha = d_votes * pm_wt * day_wt,
            beta = r_votes * pm_wt * day_wt) %>%
+    
+    # add in uniform prior (a = b = 1)
     summarize(alpha = sum(alpha) + 1,
               beta = sum(beta) + 1) %>%
+    
+    # get day's CI, voteshare, & p_win for both candidates
     mutate(date = inp_date,
            d_voteshare = alpha/(alpha + beta),
            d_lower = qbeta(0.025, alpha, beta),
@@ -63,7 +75,11 @@ poll_map <- function(inp_date, final_date) {
            r_lower = qbeta(0.025, beta, alpha),
            r_upper = qbeta(0.975, beta, alpha),
            r_win = 1 - pbeta(0.5, beta, alpha)) %>%
+    
+    # add in polls to plot against
     left_join(polls, by = c("date" = "end_date")) %>%
+    
+    # get 2pv result from polls
     mutate(poll_res = d_votes/t_votes) %>%
     select(date, poll_res, alpha, beta,
            d_voteshare, d_lower, d_upper, d_win, 
@@ -128,7 +144,7 @@ expected_vote <-
        y = NULL) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1))
 
-# function to plot daily win probability ----
+# plot win probability ----
 
 probability <- 
   map2_dfr(days_sequence,
