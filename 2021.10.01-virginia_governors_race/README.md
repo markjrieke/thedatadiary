@@ -1,4 +1,4 @@
 VA Governor Race Polling Average
 ================
 
-yeehaw initial commit
+![](plots/race_results_current.png)

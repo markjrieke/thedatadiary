@@ -7,4 +7,4 @@ output: rmarkdown::github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-yeehaw initial commit
+![](plots/race_results_current.png)
