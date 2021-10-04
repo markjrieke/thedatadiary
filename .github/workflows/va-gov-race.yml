@@ -11,33 +11,38 @@ jobs:
   update_readme:
     
     # add runner
-    runs-on: macos-latest
+    runs-on: windows-latest
     
-    # load repo & install R
+    # do each step in sequenc
     steps:
-      - uses: actions/checkout@master
-      - uses: r-lib/actions/setup-r@master
       
-      # setup R
-      - name: Install packages
+      - name: Checkout repo
+        uses: actions/checkout@master
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@master
+        
+      - name: Cache Renv Packages
+        uses: actions/cache@v1
+        with:
+          path: $HOME/.local/share/renv
+          key: r-${{ hashFiles('renv.lock') }}
+          restore-keys: r-
+          
+      - name: Restore Packages
         run: |
-          R -e 'install.packages("tidyverse")'
-          R -e 'install.packages("lubridate")'
-          R -e 'install.packages("patchwork")'
-          R -e 'install.packages("ggtext")'
+          R -e 'install.packages("renv")'
+          R -e 'renv::restore()'
       
-      # run R script
       - name: Run VA Update
         run: Rscript 2021.10.01-virginia_governors_race/scripts/va_poll_wrangle.R
         
-      # add images from script
       - name: Commit files
         run: |
           git config --local user.name "GitHub Action"
           git config --local user.email "action@github.com"
           git commit -m "Update VA GOV via GitHub Actions" -a
           
-      # push 
       - name: Push update
         uses: ad-m/github-push-action@master
         with: 
