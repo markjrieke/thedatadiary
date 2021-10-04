@@ -201,11 +201,4 @@ ggsave(paste0(path, "plots/race_results_current.png"),
        height = 12,
        units = "in",
        dpi = 500)
-  
-
-  
-  
-  
-
-
 
