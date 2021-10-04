@@ -30,9 +30,10 @@ jobs:
           restore-keys: r-
           
       - name: Restore Packages
+        shell: Rscript {0}
         run: |
-          R -e 'install.packages("renv")'
-          R -e 'renv::restore()'
+          if(!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
+          renv::restore()
       
       - name: Run VA Update
         run: Rscript 2021.10.01-virginia_governors_race/scripts/va_poll_wrangle.R
