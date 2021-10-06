@@ -23,5 +23,13 @@ for more detail.
 
 #### some programming notes
 
-I’ve started working in Rmarkdown for these articles (you can actually
-view the native file for this post [here]())
+-   I’ve been named one of [RStudio Community’s New Users of the
+    Month](https://community.rstudio.com/badges/44/new-user-of-the-month)!
+-   I’ve started working in Rmarkdown for these posts (you can actually
+    view the native file for this post
+    [here](https://github.com/markjrieke/thedatadiary/tree/main/2021.10.05-task_scheduler_article)).
+    This allows me to mix in code and prose in one document & should
+    make the process a bit easier on my end.
+-   I’ve scheduled out posts every two weeks for the rest of the year. I
+    wanted to give myself enough time to work on some longer term
+    projects, so be on the lookout for more in store!
