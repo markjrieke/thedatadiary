@@ -1,0 +1,27 @@
+Automated Email Reports with R, VBA, and the Task Scheduler
+================
+
+In my job, I spend a good amount of time working in the platform setup
+by our survey vendor, [Qualtrics](https://www.qualtrics.com/). There are
+some pre-formatted reports that we can send on a recurring basis through
+Qualtrics, but for one-off or custom reports, I can work with the raw
+data in R. A few weeks ago, however, I was asked to setup a recurring
+email to send a customized report to a group of hospital directors each
+week. While R makes generating the report simple, sending out each week
+was tedious, as each one needed to be sent separately. Since the reports
+contain patient information, I couldn’t automate via a third party
+server like [GitHub Actions](https://github.com/features/actions). I
+needed a way to localize the automation to my computer.
+
+Luckily enough, I was able to work out a solution! I wrote about it in a
+submission to [RStudio’s 2021 Call for
+Documentation](https://community.rstudio.com/t/r-views-call-for-documentation-announcement/110579).
+You can read my article on [Automated Email Reports with R, VBA, and the
+Task
+Scheduler](https://community.rstudio.com/t/automated-email-reports-with-r-vba-and-the-task-scheduler-r-views-submission/115807/5)
+for more detail.
+
+#### some programming notes
+
+I’ve started working in Rmarkdown for these articles (you can actually
+view the native file for this post [here]())
