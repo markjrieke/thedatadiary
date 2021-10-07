@@ -7,11 +7,14 @@
         -   kitchen sink
         -   no regularization
         -   report vip
+        -   RETRY WITH BEST NORMALIZE PACKAGE SEE IF THAT HELPS
     -   regularized linear regression
         -   kitchen sink, no additional features
         -   cvfold or bootstrap resamples?
         -   gridregular grid or something fancier?
+        -   RETRY WITH BEST NORMALIZE PACKAGE SEE IF THAT HELPS
     -   feature engineering
+        -   feature EDA
         -   collinear features?
         -   interactive features
         -   non-linear features
