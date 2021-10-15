@@ -12,6 +12,17 @@ source("https://raw.githubusercontent.com/markjrieke/thedatadiary/main/dd_theme_
 # read in polls ----
 polls <- read_csv("https://projects.fivethirtyeight.com/polls-page/data/governor_polls.csv")
 
+# filter out rasmussen/trafalgar?
+exc_pollsters <- TRUE
+
+if (exc_pollsters == TRUE) {
+  
+  polls <- polls %>%
+    filter(!str_detect(pollster, "Rasmussen")) %>%
+    filter(!str_detect(pollster, "Trafalgar"))
+  
+}
+
 # wrangle polls ----
 polls <- 
   polls %>% 
