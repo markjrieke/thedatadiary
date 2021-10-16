@@ -45,3 +45,18 @@ This will be updated daily (I’ll manually rerun/recommit until I can
 figure out GitHub Actions). This page will always show the current day’s
 average & projection, but historical runs can be found in the [plots
 folder](https://github.com/markjrieke/thedatadiary/tree/main/2021.10.01-virginia_governors_race/plots).
+
+#### UPDATE 10.15.21
+
+I’ve added a filter to remove polls conducted by
+[Rasmussen](https://www.rasmussenreports.com/) and
+[Trafalgar](https://www.thetrafalgargroup.org/). Trafalgar is [banned by
+the
+Economist](https://docs.google.com/spreadsheets/d/e/2PACX-1vQ56fySJKLL18Lipu1_i3ID9JE06voJEz2EXm6JW4Vh11zmndyTwejMavuNntzIWLY0RyhA1UsVEen0/pub?gid=0&single=true&output=csv)
+& Rasmussen is clearly partisan [here’s just one
+example](https://twitter.com/Rasmussen_Poll/status/1448819612242616324?ref_src=twsrc%5Etfw%7Ctwcamp%5Eembeddedtimeline%7Ctwterm%5Eprofile%3ARasmussen_Poll%7Ctwgr%5EeyJ0ZndfZXhwZXJpbWVudHNfY29va2llX2V4cGlyYXRpb24iOnsiYnVja2V0IjoxMjA5NjAwLCJ2ZXJzaW9uIjpudWxsfSwidGZ3X2hvcml6b25fdHdlZXRfZW1iZWRfOTU1NSI6eyJidWNrZXQiOiJodGUiLCJ2ZXJzaW9uIjpudWxsfSwidGZ3X3NwYWNlX2NhcmQiOnsiYnVja2V0Ijoib2ZmIiwidmVyc2lvbiI6bnVsbH19%7Ctwcon%5Etimelinechrome&ref_url=https%3A%2F%2Fwww.rasmussenreports.com%2F).
+Removing from this average follows the general consensus on ET (though,
+to be transparent, ET does slant far to the left). In future polling
+projects, I’d hope to develop some more robust methodology to
+programatically downweight problematic pollsters (how’s *that* for a
+tongue twister?), but for now I’m just going to outright exclude.
